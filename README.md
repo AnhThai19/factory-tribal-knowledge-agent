@@ -72,7 +72,7 @@ http://127.0.0.1:8000/docs
 - [x] SQLite knowledge schema
 - [x] SOP seed data
 - [x] Knowledge extraction
-- [ ] Verification and conflict detection
+- [x] Verification and conflict detection
 - [ ] ChromaDB retrieval
 - [ ] Agent answer endpoint
 - [ ] Evaluation script
@@ -110,7 +110,7 @@ Example request:
 ```
 
 Example extracted knowledge:
-```
+```json
 {
   "entity": "hotel_a_polyester",
   "claim": "Hotel A polyester shrinks when processed together with cotton.",
@@ -118,5 +118,45 @@ Example extracted knowledge:
   "recommendation": "Run Hotel A polyester separately or use a gentler polyester cycle.",
   "confidence": 0.68,
   "status": "candidate"
+}
+```
+
+## Verification and Conflict Detection
+
+After knowledge is extracted from a worker transcript, it is not immediately used by the agent.
+
+The verifier checks the extracted knowledge against approved SOP knowledge using `conflict_group_id`.
+
+Current prototype rules:
+
+| Condition | Decision |
+|---|---|
+| Conflicts with approved SOP knowledge | `quarantined` |
+| High-risk operational knowledge | `pending_review` |
+| Worker knowledge with confidence below 0.75 | `pending_review` |
+| No conflict and high confidence | `approved` |
+
+This staged workflow helps prevent self-poisoning. The agent will only retrieve knowledge that has been explicitly approved.
+
+
+### Example: Conflict with SOP
+
+SOP knowledge:
+
+```text
+Dryer station 3 should run at 78°C for standard cotton cycles.
+```
+
+
+Worker says:
+```
+Dryer station 3 is usually better at 85°C for cotton.
+```
+
+Verifier result:
+```json
+{
+  "verification_status": "quarantined",
+  "verification_reason": "The extracted knowledge conflicts with an existing approved knowledge item in conflict group 'dryer_station_3_temperature'."
 }
 ```

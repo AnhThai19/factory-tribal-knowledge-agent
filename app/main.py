@@ -8,11 +8,13 @@ from app.database import KnowledgeItem, create_db_and_tables, get_db
 from app.extractor import extract_knowledge_from_transcript
 from app.schemas import (
     ConversationIngestRequest,
+    IngestConversationResponse,
     KnowledgeCreate,
     KnowledgeRead,
     KnowledgeStatus,
     SourceType,
 )
+from app.verifier import verify_extracted_knowledge
 
 
 app = FastAPI(
@@ -133,7 +135,24 @@ def quarantine_knowledge_item(
     return item
 
 
-@app.post("/ingest/conversation", response_model=KnowledgeRead)
+@app.post("/knowledge/{knowledge_id}/reject", response_model=KnowledgeRead)
+def reject_knowledge_item(
+    knowledge_id: str,
+    db: Session = Depends(get_db)
+):
+    item = db.query(KnowledgeItem).filter(KnowledgeItem.id == knowledge_id).first()
+
+    if item is None:
+        raise HTTPException(status_code=404, detail="Knowledge item not found")
+
+    item.status = KnowledgeStatus.REJECTED.value
+    db.commit()
+    db.refresh(item)
+
+    return item
+
+
+@app.post("/ingest/conversation", response_model=IngestConversationResponse)
 def ingest_conversation(
     payload: ConversationIngestRequest,
     db: Session = Depends(get_db)
@@ -146,6 +165,8 @@ def ingest_conversation(
             detail="No operational knowledge could be extracted from this transcript."
         )
 
+    verification = verify_extracted_knowledge(extracted, db)
+
     item = KnowledgeItem(
         entity=extracted.entity,
         claim=extracted.claim,
@@ -155,10 +176,12 @@ def ingest_conversation(
         source_text=(
             f"conversation_id={payload.conversation_id}; "
             f"worker_id={payload.worker_id}; "
-            f"transcript={payload.transcript}"
+            f"transcript={payload.transcript}; "
+            f"verification_reason={verification.reason}; "
+            f"conflicting_item_id={verification.conflicting_item_id}"
         ),
-        confidence=extracted.confidence,
-        status=KnowledgeStatus.CANDIDATE.value,
+        confidence=verification.confidence,
+        status=verification.status.value,
         risk_level=extracted.risk_level.value,
         conflict_group_id=extracted.conflict_group_id,
     )
@@ -167,4 +190,10 @@ def ingest_conversation(
     db.commit()
     db.refresh(item)
 
-    return item
+    return IngestConversationResponse(
+        knowledge=item,
+        verification_status=verification.status,
+        verification_reason=verification.reason,
+        conflicting_item_id=verification.conflicting_item_id,
+    )
+
