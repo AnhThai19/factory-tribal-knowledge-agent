@@ -71,7 +71,7 @@ http://127.0.0.1:8000/docs
 - [x] FastAPI health check
 - [x] SQLite knowledge schema
 - [x] SOP seed data
-- [ ] Knowledge extraction
+- [x] Knowledge extraction
 - [ ] Verification and conflict detection
 - [ ] ChromaDB retrieval
 - [ ] Agent answer endpoint
@@ -86,4 +86,37 @@ To seed the database:
 
 ```bash
 python scripts/seed_db.py
+```
+
+
+## Knowledge Extraction
+
+The prototype currently uses a deterministic rule-based extractor for sample worker transcripts.
+
+This is intentional for the first version:
+
+- It makes the demo deterministic.
+- It avoids LLM API dependency during core workflow testing.
+- The extractor is isolated in `app/extractor.py`, so it can later be replaced with an LLM-based JSON extractor.
+
+Example request:
+
+```json
+{
+  "conversation_id": "conv_001",
+  "worker_id": "worker_a",
+  "transcript": "For Hotel A polyester, don't run it with cotton. It shrinks if you use the normal cotton cycle."
+}
+```
+
+Example extracted knowledge:
+```
+{
+  "entity": "hotel_a_polyester",
+  "claim": "Hotel A polyester shrinks when processed together with cotton.",
+  "condition": "normal cotton cycle or mixed cotton-polyester cycle",
+  "recommendation": "Run Hotel A polyester separately or use a gentler polyester cycle.",
+  "confidence": 0.68,
+  "status": "candidate"
+}
 ```

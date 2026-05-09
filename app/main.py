@@ -5,7 +5,14 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import KnowledgeItem, create_db_and_tables, get_db
-from app.schemas import KnowledgeCreate, KnowledgeRead, KnowledgeStatus
+from app.extractor import extract_knowledge_from_transcript
+from app.schemas import (
+    ConversationIngestRequest,
+    KnowledgeCreate,
+    KnowledgeRead,
+    KnowledgeStatus,
+    SourceType,
+)
 
 
 app = FastAPI(
@@ -120,6 +127,43 @@ def quarantine_knowledge_item(
         raise HTTPException(status_code=404, detail="Knowledge item not found")
 
     item.status = KnowledgeStatus.QUARANTINED.value
+    db.commit()
+    db.refresh(item)
+
+    return item
+
+
+@app.post("/ingest/conversation", response_model=KnowledgeRead)
+def ingest_conversation(
+    payload: ConversationIngestRequest,
+    db: Session = Depends(get_db)
+):
+    extracted = extract_knowledge_from_transcript(payload.transcript)
+
+    if extracted is None:
+        raise HTTPException(
+            status_code=422,
+            detail="No operational knowledge could be extracted from this transcript."
+        )
+
+    item = KnowledgeItem(
+        entity=extracted.entity,
+        claim=extracted.claim,
+        condition=extracted.condition,
+        recommendation=extracted.recommendation,
+        source_type=SourceType.WORKER_CONVERSATION.value,
+        source_text=(
+            f"conversation_id={payload.conversation_id}; "
+            f"worker_id={payload.worker_id}; "
+            f"transcript={payload.transcript}"
+        ),
+        confidence=extracted.confidence,
+        status=KnowledgeStatus.CANDIDATE.value,
+        risk_level=extracted.risk_level.value,
+        conflict_group_id=extracted.conflict_group_id,
+    )
+
+    db.add(item)
     db.commit()
     db.refresh(item)
 

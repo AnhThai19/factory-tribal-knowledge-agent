@@ -1,0 +1,27 @@
+[
+  {
+    "conversation_id": "conv_001",
+    "worker_id": "worker_a",
+    "transcript": "For Hotel A polyester, don't run it with cotton. It shrinks if you use the normal cotton cycle."
+  },
+  {
+    "conversation_id": "conv_002",
+    "worker_id": "worker_b",
+    "transcript": "Dryer station 3 is usually better at 85°C for cotton. The SOP says 78°C but we often increase it when the batch is still wet."
+  },
+  {
+    "conversation_id": "conv_003",
+    "worker_id": "worker_c",
+    "transcript": "If packaging line 2 sensor light stays on, don't ignore it. Stop the line and call maintenance."
+  },
+  {
+    "conversation_id": "conv_004",
+    "worker_id": "worker_d",
+    "transcript": "Welding station 3 overheats after Tuesday lunch. Usually we reduce the current by 5 percent, but it should be checked by a supervisor."
+  },
+  {
+    "conversation_id": "conv_005",
+    "worker_id": "worker_e",
+    "transcript": "Forklift batteries should never be charged near the production floor. Always move them to the charging area."
+  }
+]

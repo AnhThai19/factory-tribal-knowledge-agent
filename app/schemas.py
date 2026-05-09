@@ -68,3 +68,19 @@ class KnowledgeRead(BaseModel):
     model_config = {
         "from_attributes": True
     }
+    
+    
+class ConversationIngestRequest(BaseModel):
+    conversation_id: str
+    worker_id: str
+    transcript: str
+
+
+class ExtractedKnowledge(BaseModel):
+    entity: str
+    claim: str
+    condition: Optional[str] = None
+    recommendation: Optional[str] = None
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    risk_level: RiskLevel = Field(default=RiskLevel.MEDIUM)
+    conflict_group_id: Optional[str] = None
