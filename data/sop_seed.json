@@ -1,0 +1,62 @@
+[
+  {
+    "entity": "dryer_station_3",
+    "claim": "Dryer station 3 should run at 78°C for standard cotton cycles.",
+    "condition": "standard cotton cycle",
+    "recommendation": "Use 78°C according to the official SOP.",
+    "source_type": "sop",
+    "source_text": "SOP: Dryer station 3 must be operated at 78°C for standard cotton cycles unless a supervisor approves a deviation.",
+    "confidence": 1.0,
+    "status": "approved",
+    "risk_level": "medium",
+    "conflict_group_id": "dryer_station_3_temperature"
+  },
+  {
+    "entity": "welding_station_3",
+    "claim": "Welding station 3 should use the standard current setting during normal operation.",
+    "condition": "normal welding operation",
+    "recommendation": "Do not change the current setting unless approved by a supervisor.",
+    "source_type": "sop",
+    "source_text": "SOP: Welding station 3 must use the standard current setting. Any current adjustment requires supervisor approval.",
+    "confidence": 1.0,
+    "status": "approved",
+    "risk_level": "high",
+    "conflict_group_id": "welding_station_3_current"
+  },
+  {
+    "entity": "hotel_a_polyester",
+    "claim": "Hotel A polyester items should be processed using the standard polyester cycle.",
+    "condition": "Hotel A polyester laundry batch",
+    "recommendation": "Use the standard polyester cycle unless quality issues are observed.",
+    "source_type": "sop",
+    "source_text": "SOP: Hotel A polyester items should follow the standard polyester cycle.",
+    "confidence": 1.0,
+    "status": "approved",
+    "risk_level": "medium",
+    "conflict_group_id": "hotel_a_polyester_cycle"
+  },
+  {
+    "entity": "forklift_battery_charging",
+    "claim": "Forklift batteries should be charged only in the designated charging area.",
+    "condition": "forklift battery charging",
+    "recommendation": "Move the forklift to the designated charging area before charging.",
+    "source_type": "sop",
+    "source_text": "SOP: Forklift batteries must only be charged in the designated charging area due to safety requirements.",
+    "confidence": 1.0,
+    "status": "approved",
+    "risk_level": "high",
+    "conflict_group_id": "forklift_battery_safety"
+  },
+  {
+    "entity": "packaging_line_2",
+    "claim": "Packaging line 2 should be stopped when the sensor error light remains on for more than 30 seconds.",
+    "condition": "sensor error light remains on for more than 30 seconds",
+    "recommendation": "Stop packaging line 2 and notify maintenance.",
+    "source_type": "sop",
+    "source_text": "SOP: If the sensor error light on packaging line 2 remains active for more than 30 seconds, stop the line and notify maintenance.",
+    "confidence": 1.0,
+    "status": "approved",
+    "risk_level": "high",
+    "conflict_group_id": "packaging_line_2_sensor_error"
+  }
+]

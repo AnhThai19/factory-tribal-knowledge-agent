@@ -64,3 +64,26 @@ Open:
 ```
 http://127.0.0.1:8000/docs
 ```
+
+## Current Status
+
+- [x] Project skeleton
+- [x] FastAPI health check
+- [x] SQLite knowledge schema
+- [x] SOP seed data
+- [ ] Knowledge extraction
+- [ ] Verification and conflict detection
+- [ ] ChromaDB retrieval
+- [ ] Agent answer endpoint
+- [ ] Evaluation script
+- [ ] Slide deck
+
+## Seed SOP Knowledge
+
+This project includes a small set of approved SOP knowledge items in `data/sop_seed.json`.
+
+To seed the database:
+
+```bash
+python scripts/seed_db.py
+```
