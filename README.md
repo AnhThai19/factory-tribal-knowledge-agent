@@ -39,25 +39,28 @@ Retriever
 Agent Answer
       ↓
 LLM-as-Judge Evaluation
-
+```
 How to Run
+```
 python -m venv .venv
+```
 
 Activate environment:
-
+```
 # Windows
 .venv\Scripts\activate
 # Mac/Linux
 source .venv/bin/activate
-
+```
 Install dependencies:
-
+```
 pip install -r requirements.txt
-
+```
 Run API:
-
+```
 uvicorn app.main:app --reload
-
+```
 Open:
-
+```
 http://127.0.0.1:8000/docs
+```
